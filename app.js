@@ -1,6 +1,8 @@
 // DOM Elements
 const form = document.getElementById('reminder-form');
 const minutesInput = document.getElementById('minutes');
+const titleInput = document.getElementById('title');
+const noteInput = document.getElementById('note');
 const output = document.getElementById('output');
 const downloadBtn = document.getElementById('download-ics');
 
@@ -15,6 +17,15 @@ let eventDetails = {};
  */
 function formatDate(date) {
   return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
+
+/**
+ * Escapes special characters in ICS fields
+ * @param {string} text 
+ * @returns {string}
+ */
+function escapeICS(text) {
+  return text.replace(/,/g, '\\,').replace(/;/g, '\\;').replace(/\n/g, '\\n');
 }
 
 /**
@@ -33,12 +44,12 @@ UID:${Date.now()}@quickreminder.com
 DTSTAMP:${formatDate(new Date())}
 DTSTART:${formatDate(start)}
 DTEND:${formatDate(end)}
-SUMMARY:${title}
-DESCRIPTION:${description}
+SUMMARY:${escapeICS(title)}
+DESCRIPTION:${escapeICS(description)}
 BEGIN:VALARM
 TRIGGER:-PT0M
 ACTION:DISPLAY
-DESCRIPTION:${description}
+DESCRIPTION:${escapeICS(description)}
 END:VALARM
 END:VEVENT
 END:VCALENDAR`;
@@ -66,9 +77,16 @@ form.addEventListener('submit', (e) => {
   e.preventDefault();
 
   const minutes = parseInt(minutesInput.value);
-  
+  const title = titleInput.value.trim();
+  const note = noteInput.value.trim();
+
   if (isNaN(minutes) || minutes <= 0) {
     alert('Please enter a valid number of minutes.');
+    return;
+  }
+
+  if (!title) {
+    alert('Please enter a reminder name.');
     return;
   }
 
@@ -77,8 +95,8 @@ form.addEventListener('submit', (e) => {
   const end = new Date(start.getTime() + 1 * 60 * 1000); // 1 minute duration
 
   eventDetails = {
-    title: 'Reminder',
-    description: `This is your reminder set ${minutes} minutes ago.`,
+    title,
+    description: note || `Reminder: ${title}`,
     start,
     end
   };
