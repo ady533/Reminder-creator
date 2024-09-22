@@ -1,115 +1,136 @@
-// Register Service Worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
-    .then(reg => console.log('Service Worker registered', reg))
-    .catch(err => console.log('Service Worker registration failed', err));
+// DOM Elements
+const form = document.getElementById('event-form');
+const output = document.getElementById('output');
+const downloadBtn = document.getElementById('download-ics');
+const googleCalendarLink = document.getElementById('google-calendar');
+const appleCalendarLink = document.getElementById('apple-calendar');
+const outlookCalendarLink = document.getElementById('outlook-calendar');
+
+let eventDetails = {};
+
+// Helper Functions
+
+/**
+ * Formats a date object to YYYYMMDDTHHMMSSZ
+ * @param {Date} date 
+ * @returns {string}
+ */
+function formatDate(date) {
+  return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 }
 
-// DOM Elements
-const form = document.getElementById('reminder-form');
-const timeInput = document.getElementById('time');
-const noteInput = document.getElementById('note');
-const reminderList = document.getElementById('reminder-list');
+/**
+ * Generates ICS file content
+ * @param {object} details 
+ * @returns {string}
+ */
+function generateICS(details) {
+  const { title, description, start, end } = details;
 
-// Load reminders from localStorage
-let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
-renderReminders();
+  return `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Your Company//Quick Calendar Event//EN
+BEGIN:VEVENT
+UID:${Date.now()}@quickcalendar.com
+DTSTAMP:${formatDate(new Date())}
+DTSTART:${formatDate(start)}
+DTEND:${formatDate(end)}
+SUMMARY:${title}
+DESCRIPTION:${description}
+END:VEVENT
+END:VCALENDAR`;
+}
 
-// Form Submission
+/**
+ * Generates Google Calendar link
+ * @param {object} details 
+ * @returns {string}
+ */
+function generateGoogleCalendarLink(details) {
+  const { title, description, start, end } = details;
+  const formatDateStart = formatDate(start).replace(/[-:]/g, '').replace('Z', '');
+  const formatDateEnd = formatDate(end).replace(/[-:]/g, '').replace('Z', '');
+  
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent(description)}&dates=${formatDateStart}/${formatDateEnd}`;
+}
+
+/**
+ * Generates Apple Calendar link using webcal protocol
+ * Note: Apple Calendar doesn't support direct URL additions, so we'll use the ICS file
+ */
+function generateAppleCalendarLink() {
+  // Apple users will need to download the ICS file and open it
+  return '#';
+}
+
+/**
+ * Generates Outlook Calendar link
+ * @param {object} details 
+ * @returns {string}
+ */
+function generateOutlookCalendarLink(details) {
+  const { title, description, start, end } = details;
+  const formatDateStart = formatDate(start).replace(/[-:]/g, '').replace('Z', '');
+  const formatDateEnd = formatDate(end).replace(/[-:]/g, '').replace('Z', '');
+  
+  return `https://outlook.live.com/owa/?path=/calendar/action/compose&subject=${encodeURIComponent(title)}&body=${encodeURIComponent(description)}&startdt=${start.toISOString()}&enddt=${end.toISOString()}`;
+}
+
+// Event Listener for Form Submission
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-  
-  const minutes = parseInt(timeInput.value);
-  const note = noteInput.value.trim();
-  
-  if (isNaN(minutes) || minutes <= 0) {
-    alert('Please enter a valid number of minutes.');
+
+  // Get form values
+  const title = document.getElementById('title').value.trim();
+  const date = document.getElementById('date').value;
+  const startTime = document.getElementById('start-time').value;
+  const endTime = document.getElementById('end-time').value;
+  const description = document.getElementById('description').value.trim();
+
+  // Validate inputs
+  if (!title || !date || !startTime || !endTime) {
+    alert('Please fill in all required fields.');
     return;
   }
-  
-  const reminderTime = Date.now() + minutes * 60 * 1000;
-  
-  const reminder = {
-    id: Date.now(),
-    time: reminderTime,
-    note
+
+  const start = new Date(`${date}T${startTime}:00`);
+  const end = new Date(`${date}T${endTime}:00`);
+
+  if (end <= start) {
+    alert('End time must be after start time.');
+    return;
+  }
+
+  eventDetails = {
+    title,
+    description,
+    start,
+    end
   };
-  
-  reminders.push(reminder);
-  localStorage.setItem('reminders', JSON.stringify(reminders));
-  renderReminders();
-  scheduleNotification(reminder);
-  
-  form.reset();
+
+  // Show output section
+  output.classList.remove('hidden');
+
+  // Generate calendar links
+  googleCalendarLink.href = generateGoogleCalendarLink(eventDetails);
+  outlookCalendarLink.href = generateOutlookCalendarLink(eventDetails);
+  // Apple Calendar will use the ICS file
+
+  // Update download button
+  downloadBtn.onclick = () => downloadICS();
 });
 
-// Render Reminders
-function renderReminders() {
-  reminderList.innerHTML = '';
-  
-  reminders.forEach(reminder => {
-    const li = document.createElement('li');
-    const timeLeft = getTimeLeft(reminder.time);
-    li.textContent = `${reminder.note} - in ${timeLeft}`;
-    reminderList.appendChild(li);
-  });
+/**
+ * Downloads the ICS file
+ */
+function downloadICS() {
+  const icsContent = generateICS(eventDetails);
+  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${eventDetails.title.replace(/\s+/g, '_')}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
-
-// Calculate Time Left
-function getTimeLeft(timestamp) {
-  const now = Date.now();
-  const diff = timestamp - now;
-  
-  if (diff <= 0) return '0 minutes';
-  
-  const minutes = Math.floor(diff / (60 * 1000));
-  const seconds = Math.floor((diff % (60 * 1000)) / 1000);
-  
-  return `${minutes}m ${seconds}s`;
-}
-
-// Schedule Notification
-function scheduleNotification(reminder) {
-  if (Notification.permission === 'granted') {
-    const delay = reminder.time - Date.now();
-    if (delay > 0) {
-      setTimeout(() => {
-        showNotification(reminder);
-        removeReminder(reminder.id);
-      }, delay);
-    }
-  } else if (Notification.permission !== 'denied') {
-    Notification.requestPermission().then(permission => {
-      if (permission === 'granted') {
-        scheduleNotification(reminder);
-      }
-    });
-  }
-}
-
-// Show Notification
-function showNotification(reminder) {
-  if (navigator.serviceWorker) {
-    navigator.serviceWorker.getRegistration().then(reg => {
-      if (reg) {
-        reg.showNotification('Reminder', {
-          body: reminder.note,
-          icon: 'icon.png', // Optional: Add an icon
-          tag: `${reminder.id}`
-        });
-      }
-    });
-  }
-}
-
-// Remove Reminder
-function removeReminder(id) {
-  reminders = reminders.filter(r => r.id !== id);
-  localStorage.setItem('reminders', JSON.stringify(reminders));
-  renderReminders();
-}
-
-// Initialize Scheduled Notifications on Load
-reminders.forEach(reminder => {
-  scheduleNotification(reminder);
-});
