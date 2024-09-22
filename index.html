@@ -5,11 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Quick Reminder</title>
   <link rel="stylesheet" href="styles.css">
+  <!-- Google API Client Library -->
+  <script src="https://apis.google.com/js/api.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>Quick Reminder</h1>
-    <form id="reminder-form">
+    
+    <!-- Google Sign-In Button -->
+    <div id="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+    <button id="sign-out-button" class="hidden">Sign Out</button>
+
+    <!-- Reminder Form -->
+    <form id="reminder-form" class="hidden">
       <div class="form-group">
         <label for="minutes">Remind me in (minutes):</label>
         <input type="number" id="minutes" min="1" placeholder="Enter minutes" required>
@@ -25,10 +33,12 @@
       <button type="submit">Set Reminder</button>
     </form>
 
+    <!-- Output Section -->
     <div id="output" class="hidden">
       <h2>Reminder Set!</h2>
+      <button id="add-to-calendar">Add to Google Calendar</button>
+      <p>If you want to add it to another calendar, you can download the .ics file.</p>
       <button id="download-ics">Download .ics File</button>
-      <p>Open the downloaded file to add the reminder to your calendar.</p>
     </div>
   </div>
 
