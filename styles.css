@@ -51,13 +51,14 @@ label {
   margin-bottom: 5px;
 }
 
-input {
+input, textarea {
   width: 100%;
   padding: 10px;
   border: 1px solid var(--input-border);
   border-radius: 4px;
   background-color: var(--input-bg);
   color: var(--text-color);
+  box-sizing: border-box;
 }
 
 button {
