@@ -83,11 +83,6 @@ button:hover {
   margin-top: 30px;
 }
 
-#download-ics, #add-to-calendar, #sign-out-button {
+#download-ics {
   margin-bottom: 10px;
-}
-
-/* Optional: Style the Google Sign-In button container */
-#g-signin2 {
-  margin-bottom: 20px;
 }
