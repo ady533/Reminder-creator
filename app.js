@@ -1,10 +1,8 @@
 // DOM Elements
-const form = document.getElementById('event-form');
+const form = document.getElementById('reminder-form');
+const minutesInput = document.getElementById('minutes');
 const output = document.getElementById('output');
 const downloadBtn = document.getElementById('download-ics');
-const googleCalendarLink = document.getElementById('google-calendar');
-const appleCalendarLink = document.getElementById('apple-calendar');
-const outlookCalendarLink = document.getElementById('outlook-calendar');
 
 let eventDetails = {};
 
@@ -29,96 +27,22 @@ function generateICS(details) {
 
   return `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Your Company//Quick Calendar Event//EN
+PRODID:-//Quick Reminder//EN
 BEGIN:VEVENT
-UID:${Date.now()}@quickcalendar.com
+UID:${Date.now()}@quickreminder.com
 DTSTAMP:${formatDate(new Date())}
 DTSTART:${formatDate(start)}
 DTEND:${formatDate(end)}
 SUMMARY:${title}
 DESCRIPTION:${description}
+BEGIN:VALARM
+TRIGGER:-PT0M
+ACTION:DISPLAY
+DESCRIPTION:${description}
+END:VALARM
 END:VEVENT
 END:VCALENDAR`;
 }
-
-/**
- * Generates Google Calendar link
- * @param {object} details 
- * @returns {string}
- */
-function generateGoogleCalendarLink(details) {
-  const { title, description, start, end } = details;
-  const formatDateStart = formatDate(start).replace(/[-:]/g, '').replace('Z', '');
-  const formatDateEnd = formatDate(end).replace(/[-:]/g, '').replace('Z', '');
-  
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent(description)}&dates=${formatDateStart}/${formatDateEnd}`;
-}
-
-/**
- * Generates Apple Calendar link using webcal protocol
- * Note: Apple Calendar doesn't support direct URL additions, so we'll use the ICS file
- */
-function generateAppleCalendarLink() {
-  // Apple users will need to download the ICS file and open it
-  return '#';
-}
-
-/**
- * Generates Outlook Calendar link
- * @param {object} details 
- * @returns {string}
- */
-function generateOutlookCalendarLink(details) {
-  const { title, description, start, end } = details;
-  const formatDateStart = formatDate(start).replace(/[-:]/g, '').replace('Z', '');
-  const formatDateEnd = formatDate(end).replace(/[-:]/g, '').replace('Z', '');
-  
-  return `https://outlook.live.com/owa/?path=/calendar/action/compose&subject=${encodeURIComponent(title)}&body=${encodeURIComponent(description)}&startdt=${start.toISOString()}&enddt=${end.toISOString()}`;
-}
-
-// Event Listener for Form Submission
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  // Get form values
-  const title = document.getElementById('title').value.trim();
-  const date = document.getElementById('date').value;
-  const startTime = document.getElementById('start-time').value;
-  const endTime = document.getElementById('end-time').value;
-  const description = document.getElementById('description').value.trim();
-
-  // Validate inputs
-  if (!title || !date || !startTime || !endTime) {
-    alert('Please fill in all required fields.');
-    return;
-  }
-
-  const start = new Date(`${date}T${startTime}:00`);
-  const end = new Date(`${date}T${endTime}:00`);
-
-  if (end <= start) {
-    alert('End time must be after start time.');
-    return;
-  }
-
-  eventDetails = {
-    title,
-    description,
-    start,
-    end
-  };
-
-  // Show output section
-  output.classList.remove('hidden');
-
-  // Generate calendar links
-  googleCalendarLink.href = generateGoogleCalendarLink(eventDetails);
-  outlookCalendarLink.href = generateOutlookCalendarLink(eventDetails);
-  // Apple Calendar will use the ICS file
-
-  // Update download button
-  downloadBtn.onclick = () => downloadICS();
-});
 
 /**
  * Downloads the ICS file
@@ -129,8 +53,42 @@ function downloadICS() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${eventDetails.title.replace(/\s+/g, '_')}.ics`;
+  const sanitizedTitle = eventDetails.title.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
+  a.download = `${sanitizedTitle}_reminder.ics`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
+
+// Event Listener for Form Submission
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const minutes = parseInt(minutesInput.value);
+  
+  if (isNaN(minutes) || minutes <= 0) {
+    alert('Please enter a valid number of minutes.');
+    return;
+  }
+
+  const now = new Date();
+  const start = new Date(now.getTime() + minutes * 60 * 1000);
+  const end = new Date(start.getTime() + 1 * 60 * 1000); // 1 minute duration
+
+  eventDetails = {
+    title: 'Reminder',
+    description: `This is your reminder set ${minutes} minutes ago.`,
+    start,
+    end
+  };
+
+  // Show output section
+  output.classList.remove('hidden');
+
+  // Set download button action
+  downloadBtn.onclick = downloadICS;
+
+  // Clear the form
+  form.reset();
+});
