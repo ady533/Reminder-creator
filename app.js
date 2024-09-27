@@ -77,7 +77,7 @@ DESCRIPTION:${escapeICS(description)}
 
   // Add Alerts
   alerts.forEach((alert, index) => {
-    if (alert.enabled && alert.minutes !== null) {
+    if (alert.enabled && alert.minutes !== null && alert.minutes > 0) {
       icsContent += `BEGIN:VALARM
 TRIGGER:-PT${alert.minutes}M
 ACTION:DISPLAY
