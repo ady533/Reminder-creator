@@ -5,12 +5,16 @@ const durationInput = document.getElementById('duration');
 const titleInput = document.getElementById('title');
 const noteInput = document.getElementById('note');
 const output = document.getElementById('output');
-const downloadBtn = document.getElementById('download-ics');
 const alert1Toggle = document.getElementById('alert1-toggle');
 const alert1Minutes = document.getElementById('alert1-minutes');
 const alert2Toggle = document.getElementById('alert2-toggle');
 const alert2Minutes = document.getElementById('alert2-minutes');
 const repeatsSelect = document.getElementById('repeats');
+
+// Error Message Elements
+const durationError = document.getElementById('duration-error');
+const minutesError = document.getElementById('minutes-error');
+const titleError = document.getElementById('title-error');
 
 let eventDetails = {};
 
@@ -110,32 +114,62 @@ function downloadICS() {
   URL.revokeObjectURL(url);
 }
 
+/**
+ * Validates the form inputs and displays inline error messages
+ * @returns {boolean} - Returns true if all validations pass, else false
+ */
+function validateForm() {
+  let isValid = true;
+
+  // Reset previous error messages
+  durationError.textContent = '';
+  minutesError.textContent = '';
+  titleError.textContent = '';
+
+  // Validate Duration
+  const duration = parseInt(durationInput.value);
+  if (isNaN(duration) || duration <= 0) {
+    durationError.textContent = 'Please enter a valid duration in minutes.';
+    isValid = false;
+  }
+
+  // Validate Minutes
+  const minutes = parseInt(minutesInput.value);
+  if (isNaN(minutes) || minutes <= 0) {
+    minutesError.textContent = 'Please enter a valid number of minutes.';
+    isValid = false;
+  }
+
+  // Validate Title
+  const title = titleInput.value.trim();
+  if (!title) {
+    titleError.textContent = 'Please enter a reminder name.';
+    isValid = false;
+  }
+
+  return isValid;
+}
+
 // Event Listener for Form Submission
 form.addEventListener('submit', (e) => {
   e.preventDefault();
+
+  if (!validateForm()) {
+    // Focus on the first input with an error
+    if (durationError.textContent) {
+      durationInput.focus();
+    } else if (minutesError.textContent) {
+      minutesInput.focus();
+    } else if (titleError.textContent) {
+      titleInput.focus();
+    }
+    return;
+  }
 
   const minutes = parseInt(minutesInput.value);
   const duration = parseInt(durationInput.value);
   const title = titleInput.value.trim();
   const note = noteInput.value.trim();
-
-  if (isNaN(minutes) || minutes <= 0) {
-    alert('Please enter a valid number of minutes.');
-    minutesInput.focus();
-    return;
-  }
-
-  if (isNaN(duration) || duration <= 0) {
-    alert('Please enter a valid duration in minutes.');
-    durationInput.focus();
-    return;
-  }
-
-  if (!title) {
-    alert('Please enter a reminder name.');
-    titleInput.focus();
-    return;
-  }
 
   const now = new Date();
   const start = new Date(now.getTime() + minutes * 60 * 1000);
@@ -170,11 +204,11 @@ form.addEventListener('submit', (e) => {
     repeats
   };
 
+  // Trigger ICS download automatically
+  downloadICS();
+
   // Show output section
   output.classList.remove('hidden');
-
-  // Set download button action
-  downloadBtn.onclick = downloadICS;
 
   // Clear the form
   form.reset();
