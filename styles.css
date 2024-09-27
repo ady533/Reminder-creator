@@ -1,23 +1,28 @@
 :root {
-  --background-color: #ffffff;
+  --background-color: #f5f5dc; /* Added a light tan tint for daylight mode */
   --text-color: #000000;
-  --button-bg: #007bff;
+  --button-bg: #4caf50; /* Changed to match the "on" switch color */
   --button-text: #ffffff;
   --input-bg: #f0f0f0;
   --input-border: #ccc;
   --switch-bg: #ccc;
-  --switch-checked-bg: #4caf50;
+  --switch-checked-bg: #4caf50; /* Match the "on" switch color */
+  --focus-outline: 2px solid #4caf50; /* Focus outline color */
+  --hover-bg: #e0e0e0; /* Hover background color */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background-color: #121212;
     --text-color: #ffffff;
-    --button-bg: #1f6feb;
+    --button-bg: #81c784; /* Adjusted for dark mode */
+    --button-text: #000000;
     --input-bg: #2c2c2c;
     --input-border: #555;
     --switch-bg: #444;
     --switch-checked-bg: #81c784;
+    --focus-outline: 2px solid #81c784;
+    --hover-bg: #333333;
   }
 }
 
@@ -27,6 +32,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 20px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .container {
@@ -61,22 +67,29 @@ form {
   width: 100%;
 }
 
-.labels-row label, .inputs-row input {
-  width: 48%;
-}
-
 .labels-row label {
+  width: 48%;
   text-align: left;
   margin-bottom: 5px;
 }
 
 .inputs-row input {
+  width: 70%; /* Increased width for "Remind me in" */
   padding: 10px;
   border: 1px solid var(--input-border);
   border-radius: 4px;
   background-color: var(--input-bg);
   color: var(--text-color);
   box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.duration-reminder-group .inputs-row input:first-child {
+  width: 28%; /* Smaller width for "Duration" */
+}
+
+.inputs-row input:focus {
+  outline: var(--focus-outline);
 }
 
 .alerts-section {
@@ -132,7 +145,7 @@ form {
 }
 
 .alert input:checked + .slider:before {
-  transform: translateX(26px);
+  transform: translateX(26px); /* Adjusted to prevent collision */
 }
 
 .alert input[type="number"] {
@@ -143,6 +156,7 @@ form {
   background-color: var(--input-bg);
   color: var(--text-color);
   box-sizing: border-box;
+  transition: border-color 0.3s;
 }
 
 .alert input[type="number"]::placeholder {
@@ -150,8 +164,8 @@ form {
 }
 
 .alert input[type="number"]:focus {
-  outline: none;
-  border-color: #007bff;
+  outline: var(--focus-outline);
+  border-color: var(--button-bg);
 }
 
 label {
@@ -166,6 +180,7 @@ input, textarea, select {
   background-color: var(--input-bg);
   color: var(--text-color);
   box-sizing: border-box;
+  transition: border-color 0.3s, background-color 0.3s, color 0.3s;
 }
 
 select {
@@ -174,11 +189,12 @@ select {
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 16px;
+  cursor: pointer;
 }
 
 select:focus {
-  outline: none;
-  border-color: #007bff;
+  outline: var(--focus-outline);
+  border-color: var(--button-bg);
 }
 
 button {
@@ -189,11 +205,21 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
-button:hover {
+button:hover, button:focus {
   background-color: darken(var(--button-bg), 10%);
+  transform: translateY(-2px);
+}
+
+button:focus {
+  outline: var(--focus-outline);
+}
+
+.submit-button {
+  /* Ensure the button is easily identifiable */
+  width: 100%;
 }
 
 .hidden {
@@ -211,4 +237,52 @@ button:hover {
 /* Utility Classes */
 .switch {
   margin-right: 10px;
+}
+
+/* Hover Effects */
+input:hover, textarea:hover, select:hover {
+  background-color: var(--hover-bg);
+}
+
+button:hover {
+  background-color: #3e8e41; /* Replaced darken with a specific color */
+}
+
+/* Focus Styles */
+input:focus, textarea:focus, select:focus, button:focus {
+  outline: var(--focus-outline);
+}
+
+/* Adjust switch sphere position to prevent collision */
+.alert input:checked + .slider:before {
+  transform: translateX(26px); /* Ensure it doesn't collide */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .labels-row, .inputs-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .labels-row label, .inputs-row input {
+    width: 100%;
+  }
+
+  .duration-reminder-group .inputs-row input:first-child {
+    width: 100%;
+  }
+
+  .duration-reminder-group .inputs-row input:last-child {
+    width: 100%;
+  }
+
+  .alert {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .alert input[type="number"] {
+    width: 100%;
+  }
 }
