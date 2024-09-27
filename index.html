@@ -9,7 +9,7 @@
 <body>
   <div class="container">
     <h1>Quick Reminder</h1>
-    <form id="reminder-form">
+    <form id="reminder-form" aria-labelledby="form-heading">
       <!-- Duration and Remind Me In Section -->
       <div class="form-group duration-reminder-group">
         <div class="labels-row">
@@ -17,48 +17,93 @@
           <label for="minutes">Remind me in (minutes):</label>
         </div>
         <div class="inputs-row">
-          <input type="number" id="duration" min="1" value="1" title="Duration in minutes" required>
-          <input type="number" id="minutes" min="1" placeholder="Enter minutes" required>
+          <input
+            type="number"
+            id="duration"
+            min="1"
+            value="1"
+            title="Duration in minutes"
+            required
+            aria-required="true"
+            aria-label="Duration in minutes"
+          >
+          <input
+            type="number"
+            id="minutes"
+            min="1"
+            placeholder="Enter minutes"
+            required
+            aria-required="true"
+            aria-label="Remind me in minutes"
+          >
         </div>
       </div>
 
       <!-- Reminder Name -->
       <div class="form-group">
         <label for="title">Reminder Name:</label>
-        <input type="text" id="title" placeholder="Enter reminder title" required>
+        <input
+          type="text"
+          id="title"
+          placeholder="Enter reminder title"
+          required
+          aria-required="true"
+          aria-label="Reminder name"
+        >
       </div>
 
       <!-- Optional Note -->
       <div class="form-group">
         <label for="note">Optional Note:</label>
-        <textarea id="note" placeholder="Enter additional details (optional)" rows="4"></textarea>
+        <textarea
+          id="note"
+          placeholder="Enter additional details (optional)"
+          rows="4"
+          aria-label="Optional note for reminder"
+        ></textarea>
       </div>
 
       <!-- Alerts Section -->
       <div class="form-group alerts-section">
         <!-- Primary Alert -->
         <div class="alert">
-          <label class="switch">
-            <input type="checkbox" id="alert1-toggle" checked>
+          <label class="switch" aria-label="Toggle Alert 1">
+            <input type="checkbox" id="alert1-toggle" checked aria-checked="true">
             <span class="slider"></span>
           </label>
-          <input type="number" id="alert1-minutes" min="0" value="0" title="Minutes before reminder" placeholder="Minutes before">
+          <input
+            type="number"
+            id="alert1-minutes"
+            min="0"
+            value="0"
+            title="Minutes before reminder"
+            placeholder="Minutes before"
+            aria-label="Minutes before primary alert"
+          >
         </div>
 
         <!-- Secondary Alert -->
         <div class="alert">
-          <label class="switch">
-            <input type="checkbox" id="alert2-toggle">
+          <label class="switch" aria-label="Toggle Alert 2">
+            <input type="checkbox" id="alert2-toggle" aria-checked="false">
             <span class="slider"></span>
           </label>
-          <input type="number" id="alert2-minutes" min="0" value="0" title="Minutes before reminder" placeholder="Minutes before">
+          <input
+            type="number"
+            id="alert2-minutes"
+            min="0"
+            value="0"
+            title="Minutes before reminder"
+            placeholder="Minutes before"
+            aria-label="Minutes before secondary alert"
+          >
         </div>
       </div>
 
       <!-- Repeats Section -->
       <div class="form-group">
         <label for="repeats">Repeats:</label>
-        <select id="repeats">
+        <select id="repeats" aria-label="Repeats selection">
           <option value="none">None</option>
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
@@ -66,10 +111,10 @@
         </select>
       </div>
 
-      <button type="submit">Set Reminder</button>
+      <button type="submit" class="submit-button">Set Reminder</button>
     </form>
 
-    <div id="output" class="hidden">
+    <div id="output" class="hidden" aria-live="polite">
       <h2>Reminder Set!</h2>
       <button id="download-ics">Download .ics File</button>
       <p>Open the downloaded file to add the reminder to your calendar.</p>
