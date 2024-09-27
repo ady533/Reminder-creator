@@ -10,18 +10,58 @@
   <div class="container">
     <h1>Quick Reminder</h1>
     <form id="reminder-form">
+      <!-- Reminder Time and Duration -->
       <div class="form-group">
         <label for="minutes">Remind me in (minutes):</label>
-        <input type="number" id="minutes" min="1" placeholder="Enter minutes" required>
+        <div class="input-with-duration">
+          <input type="number" id="minutes" min="1" placeholder="Enter minutes" required>
+          <span>Duration:</span>
+          <input type="number" id="duration" min="1" value="1" title="Duration in minutes">
+        </div>
       </div>
+
+      <!-- Reminder Name -->
       <div class="form-group">
         <label for="title">Reminder Name:</label>
         <input type="text" id="title" placeholder="Enter reminder title" required>
       </div>
+
+      <!-- Optional Note -->
       <div class="form-group">
         <label for="note">Optional Note:</label>
         <textarea id="note" placeholder="Enter additional details (optional)" rows="4"></textarea>
       </div>
+
+      <!-- Alerts Section -->
+      <div class="form-group alerts-section">
+        <label>Alerts:</label>
+        
+        <!-- Primary Alert -->
+        <div class="alert">
+          <input type="checkbox" id="alert1-toggle" checked>
+          <label for="alert1-toggle">Alert 1:</label>
+          <input type="number" id="alert1-minutes" min="0" value="0" title="Minutes before reminder">
+        </div>
+
+        <!-- Secondary Alert -->
+        <div class="alert">
+          <input type="checkbox" id="alert2-toggle">
+          <label for="alert2-toggle">Alert 2:</label>
+          <input type="number" id="alert2-minutes" min="0" value="0" title="Minutes before reminder">
+        </div>
+      </div>
+
+      <!-- Repeats Section -->
+      <div class="form-group">
+        <label for="repeats">Repeats:</label>
+        <select id="repeats">
+          <option value="none">None</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+      </div>
+
       <button type="submit">Set Reminder</button>
     </form>
 
