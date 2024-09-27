@@ -37,6 +37,9 @@
             aria-label="Remind me in minutes"
           >
         </div>
+        <!-- Inline Error Messages -->
+        <span class="error-message" id="duration-error" aria-live="assertive"></span>
+        <span class="error-message" id="minutes-error" aria-live="assertive"></span>
       </div>
 
       <!-- Reminder Name -->
@@ -50,6 +53,8 @@
           aria-required="true"
           aria-label="Reminder name"
         >
+        <!-- Inline Error Message -->
+        <span class="error-message" id="title-error" aria-live="assertive"></span>
       </div>
 
       <!-- Optional Note -->
