@@ -121,16 +121,19 @@ form.addEventListener('submit', (e) => {
 
   if (isNaN(minutes) || minutes <= 0) {
     alert('Please enter a valid number of minutes.');
+    minutesInput.focus();
     return;
   }
 
   if (isNaN(duration) || duration <= 0) {
     alert('Please enter a valid duration in minutes.');
+    durationInput.focus();
     return;
   }
 
   if (!title) {
     alert('Please enter a reminder name.');
+    titleInput.focus();
     return;
   }
 
@@ -181,4 +184,7 @@ form.addEventListener('submit', (e) => {
   alert1Minutes.value = 0;
   alert2Toggle.checked = false;
   alert2Minutes.value = 0;
+
+  // Set focus back to the first input
+  minutesInput.focus();
 });
