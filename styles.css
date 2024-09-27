@@ -9,7 +9,6 @@
   --switch-checked-bg: #4caf50; /* Match "on" switch color */
   --focus-outline: 2px solid #4caf50; /* Focus outline color */
   --hover-bg: #e0e0e0; /* Hover background color */
-  --error-color: #d32f2f; /* Red color for errors */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,7 +23,6 @@
     --switch-checked-bg: #81c784;
     --focus-outline: 2px solid #81c784;
     --hover-bg: #333333;
-    --error-color: #ef5350; /* Adjusted error color for dark mode */
   }
 }
 
@@ -147,7 +145,7 @@ form {
 }
 
 .alert input:checked + .slider:before {
-  transform: translateX(19px); /* Adjusted translation to 19px */
+  transform: translateX(19px); /* Adjusted to prevent collision */
 }
 
 .alert input[type="number"] {
@@ -228,10 +226,6 @@ button:focus {
   display: none;
 }
 
-#error-message {
-  /* Optional: styles for a general error message if needed */
-}
-
 #output {
   margin-top: 30px;
 }
@@ -257,14 +251,6 @@ button:hover {
 /* Focus Styles */
 input:focus, textarea:focus, select:focus, button:focus {
   outline: var(--focus-outline);
-}
-
-/* Error Message Styles */
-.error-message {
-  color: var(--error-color);
-  font-size: 14px;
-  margin-top: 5px;
-  display: block;
 }
 
 /* Adjust switch sphere position to prevent collision */
