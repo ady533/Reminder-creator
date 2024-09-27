@@ -37,9 +37,6 @@
             aria-label="Remind me in minutes"
           >
         </div>
-        <!-- Inline Error Messages -->
-        <span class="error-message" id="duration-error" aria-live="assertive"></span>
-        <span class="error-message" id="minutes-error" aria-live="assertive"></span>
       </div>
 
       <!-- Reminder Name -->
@@ -53,8 +50,6 @@
           aria-required="true"
           aria-label="Reminder name"
         >
-        <!-- Inline Error Message -->
-        <span class="error-message" id="title-error" aria-live="assertive"></span>
       </div>
 
       <!-- Optional Note -->
@@ -121,7 +116,8 @@
 
     <div id="output" class="hidden" aria-live="polite">
       <h2>Reminder Set!</h2>
-      <p>The reminder has been set and the ICS file has been downloaded automatically.</p>
+      <button id="download-ics">Download .ics File</button>
+      <p>Open the downloaded file to add the reminder to your calendar.</p>
     </div>
   </div>
 
