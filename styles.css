@@ -1,5 +1,5 @@
 :root {
-  --background-color: #f5f5dc; /* Light tan tint for daylight mode */
+  --background-color: #f4f3f2; /* Light tan tint for daylight mode */
   --text-color: #000000;
   --button-bg: #4caf50; /* Match "on" switch color */
   --button-text: #ffffff;
@@ -145,7 +145,7 @@ form {
 }
 
 .alert input:checked + .slider:before {
-  transform: translateX(26px); /* Adjusted to prevent collision */
+  transform: translateX(19px); /* Adjusted to prevent collision */
 }
 
 .alert input[type="number"] {
@@ -255,7 +255,7 @@ input:focus, textarea:focus, select:focus, button:focus {
 
 /* Adjust switch sphere position to prevent collision */
 .alert input:checked + .slider:before {
-  transform: translateX(26px); /* Ensure it doesn't collide */
+  transform: translateX(19px); /* Ensure it doesn't collide */
 }
 
 /* Responsive Design */
