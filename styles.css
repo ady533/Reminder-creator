@@ -26,7 +26,7 @@ body {
 }
 
 .container {
-  max-width: 400px;
+  max-width: 500px;
   margin: auto;
   text-align: center;
 }
@@ -47,11 +47,25 @@ form {
   align-items: flex-start;
 }
 
+.input-with-duration {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-with-duration input[type="number"] {
+  width: 100px;
+}
+
+.input-with-duration span {
+  margin-right: 5px;
+}
+
 label {
   margin-bottom: 5px;
 }
 
-input, textarea {
+input, textarea, select {
   width: 100%;
   padding: 10px;
   border: 1px solid var(--input-border);
@@ -59,6 +73,25 @@ input, textarea {
   background-color: var(--input-bg);
   color: var(--text-color);
   box-sizing: border-box;
+}
+
+.alerts-section {
+  width: 100%;
+}
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.alert input[type="checkbox"] {
+  transform: scale(1.2);
+}
+
+.alert input[type="number"] {
+  width: 80px;
 }
 
 button {
